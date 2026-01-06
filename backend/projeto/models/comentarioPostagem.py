@@ -74,11 +74,8 @@ class ComentarioPostagem(db.Model):
     usuario = db.relationship('Usuario', backref='comentarios')
 
     # Relacionamento com comentários filhos (respostas)
-    respostas = db.relationship(
-        'ComentarioPostagem',
-        backref=db.backref('comentario_pai', remote_side=[id]),
-        cascade='all, delete-orphan'
-    )
+    respostas = db.relationship('ComentarioPostagem',backref=db.backref('comentario_pai', 
+    remote_side=[id]), cascade='all, delete-orphan')
 
     def to_dict(self):
         """

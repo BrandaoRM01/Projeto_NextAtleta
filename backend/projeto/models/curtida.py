@@ -6,9 +6,8 @@ class Curtida(db.Model):
     """
     Representa uma curtida feita por um usuário.
 
-    A curtida pode estar associada a uma postagem, a um comentário
-    ou a uma resposta de comentário. Um usuário pode curtir
-    um item apenas uma vez.
+    A curtida pode estar associada a uma postagem ou a um comentário.
+    Um usuário pode curtir um item apenas uma vez.
     """
 
     __tablename__ = 'curtida'
@@ -17,7 +16,6 @@ class Curtida(db.Model):
     __table_args__ = (
         UniqueConstraint('usuario_id', 'postagem_id', name='uq_usuario_postagem'),
         UniqueConstraint('usuario_id', 'comentario_id', name='uq_usuario_comentario'),
-        UniqueConstraint('usuario_id', 'resposta_id', name='uq_usuario_resposta'),
     )
 
     # Identificador único da curtida
@@ -31,20 +29,12 @@ class Curtida(db.Model):
         comment="ID da postagem curtida."
     )
 
-    # Comentário curtido (quando a curtida for em um comentário)
+    # Comentário curtido (quando a curtida for em um comentário ou resposta)
     comentario_id = db.Column(
         db.BigInteger,
         db.ForeignKey('comentario_postagem.id', ondelete='CASCADE', onupdate='CASCADE'),
         nullable=True,
         comment="ID do comentário curtido."
-    )
-
-    # Resposta curtida (quando a curtida for em uma resposta)
-    resposta_id = db.Column(
-        db.BigInteger,
-        db.ForeignKey('resposta_comentario.id', ondelete='CASCADE', onupdate='CASCADE'),
-        nullable=True,
-        comment="ID da resposta curtida."
     )
 
     # Usuário que realizou a curtida
@@ -82,9 +72,6 @@ class Curtida(db.Model):
     # Relacionamento com o comentário
     comentario = db.relationship('ComentarioPostagem', backref='curtidas')
 
-    # Relacionamento com a resposta
-    resposta = db.relationship('RespostaComentario', backref='curtidas')
-
     # Relacionamento com o usuário
     usuario = db.relationship('Usuario', backref='curtidas')
 
@@ -100,7 +87,6 @@ class Curtida(db.Model):
             "usuario_id": self.usuario_id,
             "postagem_id": self.postagem_id,
             "comentario_id": self.comentario_id,
-            "resposta_id": self.resposta_id,
             "ativo": self.ativo,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "nome_usuario": self.usuario.nome if self.usuario else None
