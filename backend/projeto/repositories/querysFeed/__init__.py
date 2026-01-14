@@ -1,0 +1,3 @@
+from .postagemRepository import PostagemRepository
+from .comentarioPostagemRepository import ComentarioPostagemRepository
+from .curtidaRepository import CurtidaRepository
