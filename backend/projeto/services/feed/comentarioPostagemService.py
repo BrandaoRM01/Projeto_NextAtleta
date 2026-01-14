@@ -4,7 +4,7 @@ from DTOs.feed import CriarComentarioDTO
 from DTOs.feed import AtualizarComentarioDTO
 from models.comentarioPostagem import ComentarioPostagem
 
-class ComentarioService:
+class ComentarioPostagemService:
 
     @staticmethod
     def criar_comentario(dados: dict, usuario_id: int, postagem_id: int):

@@ -1,0 +1,3 @@
+from .postagemService import PostagemService
+from .comentarioPostagemService import ComentarioPostagemService
+from .curtidaService import CurtidaService

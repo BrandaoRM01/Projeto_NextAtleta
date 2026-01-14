@@ -1,0 +1,3 @@
+from .postagemController import PostagemController
+from .comentarioPostagemController import ComentarioPostagemController
+from .curtidaController import CurtidaController
