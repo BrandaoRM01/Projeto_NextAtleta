@@ -1,9 +1,9 @@
 from extension.extensao import db
 from repositories.querysFeed import PostagemRepository
-from DTOs.feed import CriarPostagemDTO
-from DTOs.feed import AtualizarPostagemDTO
-from DTOs.feed import FeedPostagemDTO
-from DTOs.feed import DetalharPostagemDTO
+from DTOs.feed.postagemDTO.criarPostagemDTO import CriarPostagemDTO
+from DTOs.feed.postagemDTO.atualizarPostagemDTO import AtualizarPostagemDTO
+#from DTOs.feed.postagemDTO import FeedPostagemDTO
+from DTOs.feed.postagemDTO.detalharPostagemDTO import DetalharPostagemDTO
 from models.postagem import Postagem
 
 class PostagemService:
@@ -86,11 +86,11 @@ class PostagemService:
         """
         postagens = PostagemRepository.buscar_todas_postagens()
 
-        return [
-            FeedPostagemDTO(postagem).build()
-            for postagem in postagens
-            if postagem.ativo
-        ]
+        #return [
+        #    FeedPostagemDTO(postagem).build()
+        #    for postagem in postagens
+        #    if postagem.ativo
+        #]
 
     @staticmethod
     def detalhar_postagem(postagem_id: int):

@@ -1,7 +1,7 @@
 from extension.extensao import db
 from repositories.querysFeed import ComentarioPostagemRepository
-from DTOs.feed import CriarComentarioDTO
-from DTOs.feed import AtualizarComentarioDTO
+from DTOs.feed.comentarioPostagemDTO.criarComentarioDTO import CriarComentarioDTO
+from DTOs.feed.comentarioPostagemDTO.atualizarComentarioDTO import AtualizarComentarioDTO
 from models.comentarioPostagem import ComentarioPostagem
 
 class ComentarioPostagemService:

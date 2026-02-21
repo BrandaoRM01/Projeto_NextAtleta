@@ -11,7 +11,13 @@ import type {
 
 const API_BASE_URL = 'http://127.0.0.1:5000';
 
-// Helper for API calls
+export interface ApiResponse {
+  success: boolean;
+  message: string;
+}
+
+
+
 async function apiCall<T>(
   endpoint: string,
   options: RequestInit = {}
@@ -273,17 +279,29 @@ export const authService = {
   },
 
   // Verify email
-  async verifyEmail(token: string): Promise<{ success: boolean; message: string }> {
+  async enviar_codigo(email: string): Promise<ApiResponse> {
     try {
-      await apiCall('/auth/verify-email', {
+      const response = await apiCall<ApiResponse>('/cadastrar/enviar_codigo', {
         method: 'POST',
-        body: JSON.stringify({ token }),
+        body: JSON.stringify({ email }),
       });
 
+      return response
+    } catch (error) {
       return {
-        success: true,
-        message: 'Email verificado com sucesso',
+        success: false,
+        message: error instanceof Error ? error.message : 'Erro ao verificar email',
       };
+    }
+  },
+  async verificar_codigo(email: string, codigo: string): Promise<ApiResponse> {
+    try {
+      const response = await apiCall<ApiResponse>('/cadastrar/verificar_codigo', {
+        method: 'POST',
+        body: JSON.stringify({ email, codigo }),
+      });
+
+      return response
     } catch (error) {
       return {
         success: false,

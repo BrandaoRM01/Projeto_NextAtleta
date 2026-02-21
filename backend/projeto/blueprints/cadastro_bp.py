@@ -6,6 +6,8 @@ from services.rg_parser import RGparse
 from services.tratamento_dados import Tratamento_dados
 from DTOs.cadastroDTO.atletaDTO import CadastroAtletaDTO
 from DTOs.cadastroDTO.agenteDTO import CadastroAgenteDTO
+from DTOs.cadastroDTO.emailDTO import EmailDTO
+from DTOs.cadastroDTO.codigoDTO import CodigoDTO
 
 cadastro_bp = Blueprint("cadastro", __name__)
 controller = CadastroController()
@@ -78,4 +80,59 @@ def cadastro_agente():
             "error": "Erro interno no servidor"
         }), 500
 
+@cadastro_bp.route('/enviar_codigo', methods=['POST'])
+def enviar_codigo():
+    try:
+        data = request.get_json(silent=True)
+        dto = EmailDTO(data['email'])
+        dto.validar_email()
+        dto = dto.build()
 
+        return CadastroController.enviar_codigo(dto)
+
+    except ValueError as e:
+        print(str(e))
+        return jsonify({
+            "success": False,
+            "message": str(e),
+            "error": str(e),
+        }), 400
+    
+    except Exception as e:
+        print(e)
+        return jsonify({
+            "success": False,
+            "message": "Erro interno no servidor",
+            "error": "Erro interno no servidor",
+        }), 500
+
+@cadastro_bp.route('/verificar_codigo', methods=['POST'])
+def verificar_codigo():
+    try:
+        data = request.get_json(silent=True)
+
+        dtoCodigo = CodigoDTO(data['codigo'])
+        dtoCodigo.validar_codigo()
+        codigo = dtoCodigo.build()
+
+        dtoEmail = EmailDTO(data['email'])
+        dtoEmail.validar_email()
+        email = dtoEmail.build()
+
+        return CadastroController.validar_codigo(email, codigo)
+    
+    except ValueError as e:
+        print(str(e))
+        return jsonify({
+            "success": False,
+            "message": str(e),
+            "error": str(e),
+        }), 400
+    
+    except Exception as e:
+        print(e)
+        return jsonify({
+            "success": False,
+            "message": "Erro interno no servidor",
+            "error": "Erro interno no servidor",
+        }), 500

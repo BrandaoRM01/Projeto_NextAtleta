@@ -1,7 +1,7 @@
 from extension.extensao import db
 from repositories.querysFeed import CurtidaRepository
-from DTOs.feed import CriarCurtidaDTO
-from DTOs.feed import RemoverCurtidaDTO
+from DTOs.feed.curtidaDTO.criarCurtidaDTO import CriarCurtidaDTO
+from DTOs.feed.curtidaDTO.removerCurtidaDTO import RemoverCurtidaDTO
 from models.curtida import Curtida
 
 

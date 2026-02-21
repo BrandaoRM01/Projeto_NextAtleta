@@ -1,5 +1,5 @@
 from models import Curtida
-from extension import db
+from extension.extensao import db
 
 class CurtidaRepository:
 
