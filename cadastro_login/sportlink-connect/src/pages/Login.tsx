@@ -34,7 +34,7 @@ const Login: React.FC = () => {
           title: 'Login realizado!',
           description: 'Bem-vindo de volta ao SportLink',
         });
-        navigate('/dashboard');
+        window.location.href = ('http://localhost:8081/');
       } else {
         setError(response.error || 'Erro ao fazer login');
       }
@@ -54,10 +54,10 @@ const Login: React.FC = () => {
           <div className="mb-10">
             <Link to="/" className="flex items-center gap-3 group">
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center [background:var(--gradient-primary)] shadow-glow">
-                <span className="text-2xl font-bold text-primary-foreground">S</span>
+                <span className="text-2xl font-bold text-primary-foreground">N</span>
               </div>
               <span className="text-2xl font-bold text-foreground">
-                Sport<span className="text-primary">Link</span>
+                Next<span className="text-primary">Atleta</span>
               </span>
             </Link>
           </div>
@@ -154,11 +154,11 @@ const Login: React.FC = () => {
         
         <div className="relative z-10 flex flex-col justify-center items-center text-center px-12">
           <div className="w-24 h-24 rounded-3xl flex items-center justify-center bg-primary-foreground/10 backdrop-blur-sm mb-8 shadow-elevated">
-            <span className="text-5xl font-bold text-primary-foreground">S</span>
+            <span className="text-5xl font-bold text-primary-foreground">N</span>
           </div>
           
           <h2 className="text-4xl font-bold text-primary-foreground mb-4">
-            SportLink
+            NextAtleta
           </h2>
           
           <p className="text-lg text-primary-foreground/80 max-w-md">

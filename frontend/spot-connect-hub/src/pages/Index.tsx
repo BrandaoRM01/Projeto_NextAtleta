@@ -24,7 +24,7 @@ const Index = () => {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl gradient-primary shadow-glow">
               <Trophy className="h-6 w-6 text-primary-foreground" />
             </div>
-            <span className="text-2xl font-bold text-primary-foreground">SportLink</span>
+            <span className="text-2xl font-bold text-primary-foreground">NextAtleta</span>
           </Link>
 
           <div className="hidden items-center gap-8 md:flex">
@@ -114,7 +114,7 @@ const Index = () => {
         <div className="container">
           <div className="mb-16 text-center">
             <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-              Por que escolher a <span className="gradient-text">SportLink</span>?
+              Por que escolher a <span className="gradient-text">NextAtleta</span>?
             </h2>
             <p className="mx-auto max-w-2xl text-muted-foreground">
               Uma plataforma completa para impulsionar sua carreira esportiva
@@ -263,7 +263,7 @@ const Index = () => {
               Pronto para dar o próximo passo na sua carreira?
             </h2>
             <p className="mb-10 text-lg text-muted-foreground">
-              Junte-se a milhares de atletas que já estão transformando suas carreiras através da SportLink.
+              Junte-se a milhares de atletas que já estão transformando suas carreiras através da NextAtleta.
             </p>
             <Button variant="gradient" size="xl" asChild>
               <Link to="/feed">
@@ -283,10 +283,10 @@ const Index = () => {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg gradient-primary">
                 <Trophy className="h-5 w-5 text-primary-foreground" />
               </div>
-              <span className="text-lg font-bold">SportLink</span>
+              <span className="text-lg font-bold">NextAtleta</span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              © 2024 SportLink. Todos os direitos reservados.
+              © 2024 NextAtleta. Todos os direitos reservados.
             </p>
             <div className="flex gap-6">
               <a href="#" className="text-sm text-muted-foreground hover:text-foreground">

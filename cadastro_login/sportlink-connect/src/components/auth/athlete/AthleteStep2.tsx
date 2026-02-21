@@ -110,21 +110,8 @@ export const AthleteStep2: React.FC<AthleteStep2Props> = ({
 
           
         </div>
-         <div className="flex items-center justify-between p-4 rounded-xl bg-secondary/50 border border-border">
-          <div>
-            <Label htmlFor="arquivos" className="font-medium">
-              Enviar em arquivo unico
-            </Label>
-            <p className="text-sm text-muted-foreground">
-              Em formato PDF ou imagem
-            </p>
-          </div>
-          <Switch
-            id="disponivel"
-            onCheckedChange={() => setArquivoUnico(!arquivoUnico)}
-          />
-        </div>
-        {!arquivoUnico && (
+         
+        {arquivoUnico && (
           <div className='space-y-4'>
             <FileUpload
                 variant="document"
@@ -143,7 +130,7 @@ export const AthleteStep2: React.FC<AthleteStep2Props> = ({
         </div>
         )}
 
-        {arquivoUnico && (
+        {!arquivoUnico && (
           <>
              <div className='space-y-4'>
           <FileUpload

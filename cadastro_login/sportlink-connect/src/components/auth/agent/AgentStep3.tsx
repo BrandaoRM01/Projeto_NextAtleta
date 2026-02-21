@@ -13,7 +13,7 @@ interface AgentStep3Props {
   errors: Partial<Record<keyof AgentRegistrationData, string>>;
   setFieldValue: (field: keyof AgentRegistrationData, value: any) => void;
   setFieldTouched: (field: keyof AgentRegistrationData) => void;
-  onSubmit: () => void;
+  enviar_codigo: () => void;
   onBack: () => void;
   validateForm: (fields?: (keyof AgentRegistrationData)[]) => boolean;
   loading: boolean;
@@ -24,7 +24,7 @@ export const AgentStep3: React.FC<AgentStep3Props> = ({
   errors,
   setFieldValue,
   setFieldTouched,
-  onSubmit,
+  enviar_codigo,
   onBack,
   validateForm,
   loading,
@@ -32,7 +32,7 @@ export const AgentStep3: React.FC<AgentStep3Props> = ({
   const handleSubmit = () => {
     const isValid = validateForm(['tipo_documento', 'numero_documento']);
     if (isValid) {
-      onSubmit();
+      enviar_codigo();
     }
   };
 
@@ -148,7 +148,7 @@ export const AgentStep3: React.FC<AgentStep3Props> = ({
           {loading ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              Cadastrando...
+              Enviando codigo...
             </>
           ) : (
             <>

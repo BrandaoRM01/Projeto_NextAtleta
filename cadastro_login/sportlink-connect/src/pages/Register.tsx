@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Users, Building2, GraduationCap, Trophy, Loader2, Check } from 'lucide-react';
+import { ArrowLeft, User, Users, Building2, GraduationCap, Trophy, Loader2, Check, Lock } from 'lucide-react';
+import FormField from '@/components/auth/FormField';
 import { Button } from '@/components/ui/button';
 import { Stepper } from '@/components/auth/Stepper';
 import { AthleteStep1 } from '@/components/auth/athlete/AthleteStep1';
@@ -13,6 +14,8 @@ import { useRegistrationForm } from '@/hooks/useRegistrationForm';
 import { useToast } from '@/hooks/use-toast';
 import authService from '@/services/auth.service';
 import type { AthleteRegistrationData, AgentRegistrationData, UserType } from '@/types/auth.types';
+import { Modal, ModalContent, ModalDescription, ModalHeader, ModalFooter, ModalOverlay, ModalTitle } from '@/components/ui/modal';
+import { Reenviar } from '@/components/ui/reenviar';
 
 type UserTypeSelection = 'atleta' | 'agente' | null;
 
@@ -107,12 +110,18 @@ const Register: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [mensagem, setMensagem] = useState('');
+  const [openModalCodigo, setOpenModalCodigo] = useState(false);
+  const [codigo, setCodigo] = useState('');
+  const [ ErroCodigo, setErroCodigo] = useState(false);
+  const [mensagemLoading, setMensagemLoading] = useState('')
 
   const athleteForm = useRegistrationForm(athleteInitialData, athleteValidationRules);
   const agentForm = useRegistrationForm(agentInitialData, agentValidationRules);
 
   const athleteSteps = ['Dados Básicos', 'Dados Pessoais', 'Perfil Esportivo'];
   const agentSteps = ['Dados Básicos', 'Perfil Profissional', 'Documentação'];
+
+  
 
   const handleUserTypeSelect = (type: UserTypeSelection) => {
     setUserType(type);
@@ -131,17 +140,45 @@ const Register: React.FC = () => {
     }
   };
 
+  const enviar_codigo = async () => {
+    setLoading(true);
+    
+    try{
+      const response = await authService.enviar_codigo(athleteForm.formData.email || agentForm.formData.email)
+      if(response.success){
+        setOpenModalCodigo(true);
+        setLoading(false);
+      }else {
+      toast({
+        title: 'Erro',
+        description: response.message,
+        variant: 'destructive',
+      });
+    }
+    } catch (error) {
+      toast({
+        title: 'Erro',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const handleAthleteSubmit = async () => {
     setLoading(true);
+    setMensagemLoading("Cadastrando...")
     try {
       const response = await authService.registerAthlete(athleteForm.formData);
       if (response && response.success) {
+        setOpenModalCodigo(false);
         setSuccess(true);
         toast({
           title: 'Cadastro realizado!',
         description: "certo",
         });
-        setTimeout(() => navigate('/'), 2000);
+        setTimeout(() => navigate('/login'), 2000);
       } else {
         toast({
           title: 'Erro no cadastro!!',
@@ -156,16 +193,62 @@ const Register: React.FC = () => {
         variant: 'destructive',
       });
     } finally {
+      setOpenModalCodigo(false);
       setLoading(false);
     }
   };
 
+  const verificar_codigo = async () => {
+    setLoading(true);
+    setMensagemLoading('Verificando...')
+    try{
+      const response = await authService.verificar_codigo(athleteForm.formData.email || agentForm.formData.email, codigo)
+      if(response && response.success){
+        toast({
+          title: 'Codigo Verificado!',
+          description: "Codigo verificado com sucesso, realizando o seu cadastro! 🎉🎉",
+        });
+        if(userType === 'atleta'){
+
+          handleAthleteSubmit();
+          setMensagemLoading('Cadastrando...')
+          return true;
+        }
+        if(userType === 'agente'){
+          handleAgentSubmit();
+          setMensagemLoading('Cadastrando...')
+          return true;
+        }
+      }
+
+      else{
+        setLoading(false);
+        toast({
+          title: 'Erro ao verificar o codigo!',
+          description: response.message,
+          variant: 'destructive',
+      })
+      }
+    }
+    catch(error){
+      setLoading(false);
+      toast({
+          title: 'Erro ao verificar o codigo!',
+          description: error,
+          variant: 'destructive',
+      })
+      setErroCodigo(true)
+      return false;
+    }
+   
+  }
   const handleAgentSubmit = async () => {
     setLoading(true);
     try {
       const response = await authService.registerAgent(agentForm.formData);
       if (response) {
         setSuccess(true);
+        setOpenModalCodigo(false);
         setMensagem(response.message)
         toast({
           title: 'Cadastro realizado!',
@@ -186,6 +269,7 @@ const Register: React.FC = () => {
         variant: 'destructive',
       });
     } finally {
+      setOpenModalCodigo(false);
       setLoading(false);
     }
   };
@@ -290,120 +374,182 @@ const Register: React.FC = () => {
 
   // Registration form
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Header */}
-      <header className="p-4 sm:p-6 border-b border-border">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <button
-            onClick={handleBack}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="hidden sm:inline">Voltar</span>
-          </button>
+    <>
+        <div className="min-h-screen flex flex-col bg-background">
+          {/* Header */}
+          <header className="p-4 sm:p-6 border-b border-border">
+            <div className="max-w-3xl mx-auto flex items-center justify-between">
+              <button
+                onClick={handleBack}
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <span className="hidden sm:inline">Voltar</span>
+              </button>
 
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center [background:var(--gradient-primary)]">
-              <span className="text-sm font-bold text-primary-foreground">S</span>
+              <Link to="/" className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center [background:var(--gradient-primary)]">
+                  <span className="text-sm font-bold text-primary-foreground">S</span>
+                </div>
+                <span className="text-lg font-bold text-foreground hidden sm:inline">
+                  Sport<span className="text-primary">Link</span>
+                </span>
+              </Link>
+
+              <div className="w-20"></div>
             </div>
-            <span className="text-lg font-bold text-foreground hidden sm:inline">
-              Sport<span className="text-primary">Link</span>
-            </span>
-          </Link>
+          </header>
 
-          <div className="w-20"></div>
-        </div>
-      </header>
+          {/* Stepper */}
+          <div className="p-4 sm:p-6 border-b border-border bg-card/50">
+            <div className="max-w-xl mx-auto">
+              <Stepper
+                steps={userType === 'atleta' ? athleteSteps : agentSteps}
+                currentStep={currentStep}
+              />
+            </div>
+          </div>
 
-      {/* Stepper */}
-      <div className="p-4 sm:p-6 border-b border-border bg-card/50">
-        <div className="max-w-xl mx-auto">
-          <Stepper
-            steps={userType === 'atleta' ? athleteSteps : agentSteps}
-            currentStep={currentStep}
-          />
-        </div>
-      </div>
+          {/* Form content */}
+          <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
+            <div className="max-w-xl mx-auto">
+              {userType === 'atleta' ? (
+                <>
+                  {currentStep === 0 && (
+                    <AthleteStep1
+                      formData={athleteForm.formData}
+                      errors={athleteForm.errors}
+                      setFieldValue={athleteForm.setFieldValue}
+                      setFieldTouched={athleteForm.setFieldTouched}
+                      onNext={handleNext}
+                      validateForm={athleteForm.validateForm}
+                    />
+                  )}
+                  {currentStep === 1 && (
+                    <AthleteStep2
+                      formData={athleteForm.formData}
+                      errors={athleteForm.errors}
+                      setFieldValue={athleteForm.setFieldValue}
+                      setFieldTouched={athleteForm.setFieldTouched}
+                      onNext={handleNext}
+                      onBack={handleBack}
+                      validateForm={athleteForm.validateForm}
+                    />
+                  )}
+                  {currentStep === 2 && (
+                    <AthleteStep3
+                      formData={athleteForm.formData}
+                      errors={athleteForm.errors}
+                      setFieldValue={athleteForm.setFieldValue}
+                      setFieldTouched={athleteForm.setFieldTouched}
+                      enviar_codigo={enviar_codigo}
+                      onBack={handleBack}
+                      validateForm={athleteForm.validateForm}
+                      loading={loading}
+                    />
+                  )}
+                </>
+              ) : (
+                <>
+                  {currentStep === 0 && (
+                    <AgentStep1
+                      formData={agentForm.formData}
+                      errors={agentForm.errors}
+                      setFieldValue={agentForm.setFieldValue}
+                      setFieldTouched={agentForm.setFieldTouched}
+                      onNext={handleNext}
+                      validateForm={agentForm.validateForm}
+                    />
+                  )}
+                  {currentStep === 1 && (
+                    <AgentStep2
+                      formData={agentForm.formData}
+                      errors={agentForm.errors}
+                      setFieldValue={agentForm.setFieldValue}
+                      setFieldTouched={agentForm.setFieldTouched}
+                      onNext={handleNext}
+                      onBack={handleBack}
+                      validateForm={agentForm.validateForm}
+                    />
+                  )}
+                  {currentStep === 2 && (
+                    <AgentStep3
+                      formData={agentForm.formData}
+                      errors={agentForm.errors}
+                      setFieldValue={agentForm.setFieldValue}
+                      setFieldTouched={agentForm.setFieldTouched}
+                      enviar_codigo={enviar_codigo}
+                      onBack={handleBack}
+                      validateForm={agentForm.validateForm}
+                      loading={loading}
+                    />
+                  )}
 
-      {/* Form content */}
-      <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
-        <div className="max-w-xl mx-auto">
-          {userType === 'atleta' ? (
-            <>
-              {currentStep === 0 && (
-                <AthleteStep1
-                  formData={athleteForm.formData}
-                  errors={athleteForm.errors}
-                  setFieldValue={athleteForm.setFieldValue}
-                  setFieldTouched={athleteForm.setFieldTouched}
-                  onNext={handleNext}
-                  validateForm={athleteForm.validateForm}
-                />
+                
+                
+                </>
               )}
-              {currentStep === 1 && (
-                <AthleteStep2
-                  formData={athleteForm.formData}
-                  errors={athleteForm.errors}
-                  setFieldValue={athleteForm.setFieldValue}
-                  setFieldTouched={athleteForm.setFieldTouched}
-                  onNext={handleNext}
-                  onBack={handleBack}
-                  validateForm={athleteForm.validateForm}
-                />
-              )}
-              {currentStep === 2 && (
-                <AthleteStep3
-                  formData={athleteForm.formData}
-                  errors={athleteForm.errors}
-                  setFieldValue={athleteForm.setFieldValue}
-                  setFieldTouched={athleteForm.setFieldTouched}
-                  onSubmit={handleAthleteSubmit}
-                  onBack={handleBack}
-                  validateForm={athleteForm.validateForm}
-                  loading={loading}
-                />
-              )}
-            </>
-          ) : (
-            <>
-              {currentStep === 0 && (
-                <AgentStep1
-                  formData={agentForm.formData}
-                  errors={agentForm.errors}
-                  setFieldValue={agentForm.setFieldValue}
-                  setFieldTouched={agentForm.setFieldTouched}
-                  onNext={handleNext}
-                  validateForm={agentForm.validateForm}
-                />
-              )}
-              {currentStep === 1 && (
-                <AgentStep2
-                  formData={agentForm.formData}
-                  errors={agentForm.errors}
-                  setFieldValue={agentForm.setFieldValue}
-                  setFieldTouched={agentForm.setFieldTouched}
-                  onNext={handleNext}
-                  onBack={handleBack}
-                  validateForm={agentForm.validateForm}
-                />
-              )}
-              {currentStep === 2 && (
-                <AgentStep3
-                  formData={agentForm.formData}
-                  errors={agentForm.errors}
-                  setFieldValue={agentForm.setFieldValue}
-                  setFieldTouched={agentForm.setFieldTouched}
-                  onSubmit={handleAgentSubmit}
-                  onBack={handleBack}
-                  validateForm={agentForm.validateForm}
-                  loading={loading}
-                />
-              )}
-            </>
-          )}
+            </div>
+          </div>
+            
         </div>
-      </div>
-    </div>
+
+         <Modal open={openModalCodigo} onClose={() => setOpenModalCodigo(false)}>
+              <ModalContent>
+                <ModalHeader>
+                  <ModalTitle className='mb-4 text-center'>Codigo de Segurança</ModalTitle>
+                  <ModalDescription>
+
+                    
+                    <FormField 
+                    label={'Foi enviado um codigo de verificação para: ' + athleteForm.formData.email || agentForm.formData.email}
+                    type='number'
+                    className={codigo.length == 4 ?  'border-green-500' : 'border-red-500'}
+                    value={parseInt(codigo) || ''}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      if(value.length <= 4){
+                        setCodigo(value);
+                      }
+                    }}
+                    error={ErroCodigo ? 'Codigo Invalido!' : null}
+                    icon={<Lock className='w-5 h-5' />}
+                    max={4}
+                    />
+                    <center>
+                    <Reenviar 
+                      onReenviar={() => {setMensagemLoading("Reenviando..."); enviar_codigo()}}
+                      disabled={loading}
+                      className='mt-3 underline underline-offset-4'
+             
+                    />
+                    </center>
+                  </ModalDescription>
+                </ModalHeader>
+            
+                <ModalFooter>
+                  <Button variant="destructive"  onClick={() => {setOpenModalCodigo(false); setLoading(false)}}>
+                    Cancelar
+                  </Button>
+         
+                  <Button disabled={codigo.length != 4 || loading} onClick={verificar_codigo} className='[background:var(--gradient-primary)]' variant="outline">
+                    {loading ? (
+                        <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                            {mensagemLoading}
+                        </>
+                        ) : (
+                          <>
+                            Verificar
+                          </>
+                      )}
+                    
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+          </Modal>
+    </>
+    
   );
 };
 

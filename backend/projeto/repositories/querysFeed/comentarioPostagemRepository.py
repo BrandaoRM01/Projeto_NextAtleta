@@ -1,5 +1,5 @@
 from models import ComentarioPostagem
-from extension import db
+from extension.extensao import db
 
 class ComentarioPostagemRepository:
 

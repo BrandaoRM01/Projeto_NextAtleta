@@ -8,6 +8,7 @@ class CriarCurtidaDTO:
         self.data = data
         self.data_final = {}
 
+
     def validar(self):
         if not self.data:
             raise ValueError("Dados da curtida não enviados")

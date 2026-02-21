@@ -15,7 +15,7 @@ class Atleta(db.Model):
     )
 
     data_nascimento = db.Column(db.Date, nullable=False)
-    cpf = db.Column(db.String(30), nullable=False)
+    cpf = db.Column(db.String(30), nullable=False, unique = True)
     documento_validado = db.Column(db.Boolean, default=False)
 
     maior_idade = db.Column(db.Boolean)

@@ -12,7 +12,7 @@ class CurtidaController:
 
     @staticmethod
     @login_required
-    def curtir_postagem(postagem_id: int):
+    def criar_curtida(postagem_id: int):
         """
         Cria uma curtida para uma postagem.
 

@@ -1,5 +1,5 @@
 from models import Postagem
-from extension import db
+from extension.extensao import db
 
 class PostagemRepository:
 

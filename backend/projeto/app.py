@@ -1,6 +1,6 @@
 from flask import Flask, request
 from config.config import Config
-from extension.extensao import db, cors, jwt
+from extension.extensao import db, cors, jwt, mail
 
 
 def init_app():
@@ -8,7 +8,7 @@ def init_app():
     app.config.from_object(Config)
     db.init_app(app)
     jwt.init_app(app)
-
+    mail.init_app(app)
     cors(app, 
          supports_credentials=True, 
          resources={r"/*": {
